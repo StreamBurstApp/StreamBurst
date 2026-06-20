@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Abstractions/Abstractions.csproj" Id="039daa0e-c348-4ac3-bb3f-95e8cc8eed9d" />
+  <Project Path="Core/Core.csproj" />
+  <Project Path="Infrastructure/Infrastructure.csproj" Id="f6f76c1f-326b-44d9-9fdf-1023741e0e21" />
+</Solution>
