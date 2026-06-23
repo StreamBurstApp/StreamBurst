@@ -48,3 +48,6 @@ jobs:
 
       - name: Publish to GitHub Packages
         run: dotnet nuget push out/*.nupkg -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
+
+      - name: Publish to NuGet.org
+        run: dotnet nuget push out/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
