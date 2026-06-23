@@ -3,15 +3,16 @@ name: Publish SDK
 on:
   push:
     tags:
-      - 'SDK-*'
-      - 'SDK=*'
+      - "SDK-*"
+      - "SDK=*"
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     permissions:
+      id-token: write # Required to request the OIDC token for NuGet.org Trusted Publishing
       contents: read
-      packages: write
+      packages: write # Required for GitHub Packages
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,7 +20,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: "10.0.x"
 
       - name: Extract Version
         run: |
@@ -49,5 +50,16 @@ jobs:
       - name: Publish to GitHub Packages
         run: dotnet nuget push out/*.nupkg -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
 
-      - name: Publish to NuGet.org
-        run: dotnet nuget push out/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push to NuGet.org
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          dotnet nuget push out/*.nupkg \
+            --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
