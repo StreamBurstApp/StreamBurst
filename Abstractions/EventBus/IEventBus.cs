@@ -9,7 +9,7 @@ namespace Abstractions.EventBus
     {
         void Publish(ModuleEvent moduleEvent);
         IDisposable Subscribe(string? sourceModuleId, string? eventTypem, Action<ModuleEvent> handler);
-        IDisposable SubscribeAsync(string? sourceModuleId, string? eventType, Func<ModuleEvent, Task> handler);
+        IDisposable SubscribeAsync(string? sourceModuleId, string? eventType, Func<ModuleEvent, CancellationToken, Task> handler);
         ModuleEvent? GetLastValue(string sourceModuleId, string eventType);
     }
 }
