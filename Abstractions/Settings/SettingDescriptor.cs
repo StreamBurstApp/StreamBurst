@@ -1,9 +1,9 @@
-﻿using Abstractions.Event;
+﻿using StreamBurst.Abstractions.Event;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Settings
+namespace StreamBurst.Abstractions.Settings
 {
     public class SettingDescriptor
     {
@@ -13,3 +13,4 @@ namespace Abstractions.Settings
         public ValueConstraint? Constraint { get; init; }
     }
 }
+

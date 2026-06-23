@@ -1,10 +1,10 @@
-﻿using Abstractions.Catalog;
-using Abstractions.Event;
+﻿using StreamBurst.Abstractions.Catalog;
+using StreamBurst.Abstractions.Event;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Module
+namespace StreamBurst.Abstractions.Module
 {
     public interface IModuleDynamicCatalog
     {
@@ -13,3 +13,4 @@ namespace Abstractions.Module
         event EventHandler<CatalogChangedEventArgs> CatalogChanged;
     }
 }
+

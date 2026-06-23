@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Module
+namespace StreamBurst.Abstractions.Module
 {
     public interface IModuleStorage
     {
@@ -11,3 +11,4 @@ namespace Abstractions.Module
         Task DeleteAsync(string key, CancellationToken ct = default);
     }
 }
+

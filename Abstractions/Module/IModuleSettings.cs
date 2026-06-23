@@ -1,9 +1,9 @@
-﻿using Abstractions.Settings;
+﻿using StreamBurst.Abstractions.Settings;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Module
+namespace StreamBurst.Abstractions.Module
 {
     public interface IModuleSettings
     {
@@ -12,3 +12,4 @@ namespace Abstractions.Module
         void ApplySettingsState(object newState);
     }
 }
+

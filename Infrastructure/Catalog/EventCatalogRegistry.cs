@@ -1,5 +1,5 @@
-﻿using Abstractions.Catalog;
-using Abstractions.Event;
+﻿using StreamBurst.Abstractions.Catalog;
+using StreamBurst.Abstractions.Event;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -59,3 +59,4 @@ namespace Infrastructure.Catalog
         }
     }
 }
+

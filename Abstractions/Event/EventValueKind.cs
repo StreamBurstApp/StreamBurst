@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Event
+namespace StreamBurst.Abstractions.Event
 {
     public enum EventValueKind
     {
@@ -14,3 +14,4 @@ namespace Abstractions.Event
         Trigger
     }
 }
+

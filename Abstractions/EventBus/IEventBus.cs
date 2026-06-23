@@ -1,9 +1,9 @@
-﻿using Abstractions.Event;
+﻿using StreamBurst.Abstractions.Event;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.EventBus
+namespace StreamBurst.Abstractions.EventBus
 {
     public interface IEventBus
     {
@@ -13,3 +13,4 @@ namespace Abstractions.EventBus
         ModuleEvent? GetLastValue(string sourceModuleId, string eventType);
     }
 }
+

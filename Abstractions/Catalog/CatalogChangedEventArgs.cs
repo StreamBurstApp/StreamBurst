@@ -1,9 +1,9 @@
-﻿using Abstractions.Event;
+﻿using StreamBurst.Abstractions.Event;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Catalog
+namespace StreamBurst.Abstractions.Catalog
 {
     public sealed class CatalogChangedEventArgs : EventArgs
     {
@@ -18,3 +18,4 @@ namespace Abstractions.Catalog
         Modified
     }
 }
+

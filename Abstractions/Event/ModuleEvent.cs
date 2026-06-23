@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Event
+namespace StreamBurst.Abstractions.Event
 {
     public sealed record ModuleEvent
     {
@@ -14,3 +14,4 @@ namespace Abstractions.Event
         public IReadOnlyDictionary<string, string>? Tags { get; init; }
     }
 }
+

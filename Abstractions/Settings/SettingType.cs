@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Settings
+namespace StreamBurst.Abstractions.Settings
 {
     public enum SettingType
     {
@@ -13,3 +13,4 @@ namespace Abstractions.Settings
         Slider
     }
 }
+
