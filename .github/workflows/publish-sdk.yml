@@ -1,0 +1,50 @@
+name: Publish SDK
+
+on:
+  push:
+    tags:
+      - 'SDK-*'
+      - 'SDK=*'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Extract Version
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          # Remove 'SDK-' or 'SDK=' prefix to get clean version
+          VERSION="${TAG_NAME#SDK-}"
+          VERSION="${VERSION#SDK=}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Building package version: $VERSION"
+
+      - name: Verify Version Match
+        run: |
+          CSPROJ_VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' Abstractions/Abstractions.csproj | tr -d '[:space:]')
+          echo "Version in csproj: '$CSPROJ_VERSION'"
+          echo "Version from tag: '${{ env.VERSION }}'"
+          if [ "${{ env.VERSION }}" != "$CSPROJ_VERSION" ]; then
+            echo "::error::Version mismatch! Tag version is ${{ env.VERSION }}, but csproj version is $CSPROJ_VERSION"
+            exit 1
+          fi
+
+      - name: Restore dependencies
+        run: dotnet restore Abstractions/Abstractions.csproj
+
+      - name: Build and Pack
+        run: dotnet pack Abstractions/Abstractions.csproj -c Release /p:Version=${{ env.VERSION }} -o out
+
+      - name: Publish to GitHub Packages
+        run: dotnet nuget push out/*.nupkg -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate

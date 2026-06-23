@@ -1,0 +1,52 @@
+name: Developer Build
+
+on:
+  workflow_dispatch: # Allows manual triggering from the Actions tab on any branch
+
+jobs:
+  build-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Determine Dev Version
+        run: |
+          # Construct a development version suffix using the short commit SHA
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "DEV_VERSION=0.0.0-dev-$SHORT_SHA" >> $GITHUB_ENV
+          echo "Building dev version: 0.0.0-dev-$SHORT_SHA"
+
+      - name: Publish application
+        run: |
+          # Framework-dependent debug/dev publish
+          dotnet publish Core/Core.csproj -c Debug /p:Version=${{ env.DEV_VERSION }} -o publish
+
+      - name: Create Zip Archive
+        run: |
+          cd publish
+          zip -r ../StreamBurst-dev-${{ env.DEV_VERSION }}.zip .
+          cd ..
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: StreamBurst-dev-${{ env.DEV_VERSION }}
+          path: StreamBurst-dev-${{ env.DEV_VERSION }}.zip
+          retention-days: 7 # Keeps storage clean by deleting after 7 days
+
+      - name: Build and Pack Abstractions
+        run: |
+          dotnet pack Abstractions/Abstractions.csproj -c Debug /p:Version=${{ env.DEV_VERSION }} -o out-nuget
+
+      - name: Upload NuGet Packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: StreamBurst.Abstractions-dev-${{ env.DEV_VERSION }}
+          path: out-nuget/*.nupkg
+          retention-days: 7
