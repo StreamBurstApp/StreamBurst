@@ -1,9 +1,9 @@
-﻿using Abstractions.Event;
+﻿using StreamBurst.Abstractions.Event;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Module
+namespace StreamBurst.Abstractions.Module
 {
     public interface IModule
     {
@@ -16,3 +16,4 @@ namespace Abstractions.Module
         Task ShutdownAsync(CancellationToken ct);
     }
 }
+

@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Module
+namespace StreamBurst.Abstractions.Module
 {
     public interface IModuleUI : IModule
     {
         Control CreateSettingsView();
     }
 }
+

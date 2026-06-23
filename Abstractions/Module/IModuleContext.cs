@@ -1,11 +1,11 @@
-﻿using Abstractions.Catalog;
-using Abstractions.EventBus;
+﻿using StreamBurst.Abstractions.Catalog;
+using StreamBurst.Abstractions.EventBus;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Module
+namespace StreamBurst.Abstractions.Module
 {
     public interface IModuleContext
     {
@@ -15,3 +15,4 @@ namespace Abstractions.Module
         IModuleStorage ModuleStorage { get; }
     }
 }
+

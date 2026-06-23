@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Event
+namespace StreamBurst.Abstractions.Event
 {
     public sealed record ParamDescriptor
     {
@@ -13,3 +13,4 @@ namespace Abstractions.Event
         public ValueConstraint? Constraint { get; init; }
     }
 }
+

@@ -1,4 +1,4 @@
-﻿using Abstractions.Module;
+﻿using StreamBurst.Abstractions.Module;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -105,3 +105,4 @@ namespace Infrastructure.Storage
         }
     }
 }
+

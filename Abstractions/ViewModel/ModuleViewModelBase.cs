@@ -3,9 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.ViewModel
+namespace StreamBurst.Abstractions.ViewModel
 {
     public class ModuleViewModelBase : ObservableObject
     {
     }
 }
+

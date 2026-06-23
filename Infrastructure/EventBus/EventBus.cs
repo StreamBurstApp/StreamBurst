@@ -1,5 +1,5 @@
-using Abstractions.Event;
-using Abstractions.EventBus;
+﻿using StreamBurst.Abstractions.Event;
+using StreamBurst.Abstractions.EventBus;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -152,3 +152,4 @@ namespace Infrastructure.EventBus
         }
     }
 }
+

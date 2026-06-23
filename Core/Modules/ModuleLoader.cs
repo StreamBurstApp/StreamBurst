@@ -1,6 +1,6 @@
-﻿using Abstractions.Catalog;
-using Abstractions.EventBus;
-using Abstractions.Module;
+﻿using StreamBurst.Abstractions.Catalog;
+using StreamBurst.Abstractions.EventBus;
+using StreamBurst.Abstractions.Module;
 using Infrastructure.Catalog;
 using Infrastructure.Storage;
 using Microsoft.Extensions.Logging;
@@ -189,3 +189,4 @@ namespace Core.Modules
         }
     }
 }
+

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abstractions.Event
+namespace StreamBurst.Abstractions.Event
 {
     public sealed record ActionDescriptor
     {
@@ -11,3 +11,4 @@ namespace Abstractions.Event
         public required ParamDescriptor[] Parameters { get; init; }
     }
 }
+
