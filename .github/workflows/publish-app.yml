@@ -1,0 +1,62 @@
+name: Publish Application
+
+on:
+  push:
+    tags:
+      - 'StreamBurst-*'
+      - 'StreamBurst=*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to create releases
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Extract Version
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          # Remove 'StreamBurst-' or 'StreamBurst=' prefix
+          VERSION="${TAG_NAME#StreamBurst-}"
+          VERSION="${VERSION#StreamBurst=}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Building app version: $VERSION"
+
+      - name: Verify Version Match
+        run: |
+          CSPROJ_VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' Core/Core.csproj | tr -d '[:space:]')
+          echo "Version in csproj: '$CSPROJ_VERSION'"
+          echo "Version from tag: '${{ env.VERSION }}'"
+          if [ "${{ env.VERSION }}" != "$CSPROJ_VERSION" ]; then
+            echo "::error::Version mismatch! Tag version is ${{ env.VERSION }}, but csproj version is $CSPROJ_VERSION"
+            exit 1
+          fi
+
+      - name: Publish application
+        run: |
+          # Framework-dependent publish for cross-platform support
+          dotnet publish Core/Core.csproj -c Release /p:Version=${{ env.VERSION }} -o publish
+
+      - name: Create Zip Archive
+        run: |
+          cd publish
+          zip -r ../StreamBurst-${{ env.VERSION }}.zip .
+          cd ..
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: StreamBurst-${{ env.VERSION }}.zip
+          name: Release StreamBurst ${{ env.VERSION }}
+          tag_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
