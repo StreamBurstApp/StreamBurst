@@ -12,7 +12,7 @@ namespace Abstractions.Module
         Version Version { get; }
         IReadOnlyList<EventDescriptor> GetEventCatalog();
         IReadOnlyList<ActionDescriptor> GetActionCatalog();
-        Task InitializeAsync();
-        Task ShutdownAsync();
+        Task InitializeAsync(IModuleContext context, CancellationToken ct);
+        Task ShutdownAsync(CancellationToken ct);
     }
 }
