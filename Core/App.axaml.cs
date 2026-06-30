@@ -13,6 +13,7 @@ using StreamBurst.Views;
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace StreamBurst
 {
@@ -22,6 +23,10 @@ namespace StreamBurst
         internal ModuleLoader? ModuleLoader { get; private set; }
         public EventBus EventBus { get; private set; } = null!;
 
+#if DEBUG
+        [DllImport("kernel32.dll")]
+        private static extern bool AllocConsole();
+#endif
 
         public override void Initialize()
         {
@@ -30,6 +35,10 @@ namespace StreamBurst
 
         public override void OnFrameworkInitializationCompleted()
         {
+#if DEBUG
+            AllocConsole();
+#endif
+
             InitializeModuleSystem();
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

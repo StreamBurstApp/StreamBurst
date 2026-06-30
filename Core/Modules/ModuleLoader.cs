@@ -1,12 +1,13 @@
-﻿using StreamBurst.Abstractions.Catalog;
-using StreamBurst.Abstractions.EventBus;
-using StreamBurst.Abstractions.Module;
-using Infrastructure.Catalog;
+﻿using Infrastructure.Catalog;
 using Infrastructure.Storage;
 using Microsoft.Extensions.Logging;
+using StreamBurst.Abstractions.Catalog;
+using StreamBurst.Abstractions.EventBus;
+using StreamBurst.Abstractions.Module;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -23,6 +24,7 @@ namespace Core.Modules
         private readonly IEventBus _eventBus;
         private readonly IEventCatalogRegistry _catalogRegistry;
         private readonly ILoggerFactory _loggerFactory;
+        private readonly ILogger<ModuleLoader> _logger;
 
         private readonly Dictionary<string, LoadedModule> _loadedModules = new();
 
@@ -39,6 +41,7 @@ namespace Core.Modules
             _eventBus = eventBus;
             _catalogRegistry = catalogRegistry;
             _loggerFactory = loggerFactory;
+            _logger = loggerFactory.CreateLogger<ModuleLoader>();
 
             Directory.CreateDirectory(_modulesRoot);
         }
@@ -58,26 +61,32 @@ namespace Core.Modules
 
         private async Task LoadSingleModuleAsync(string moduleDir, CancellationToken ct)
         {
+            _logger.LogInformation("Loading module from {Dir}", moduleDir);
+
             var manifestPath = Path.Combine(moduleDir, "manifest.json");
 
             if (!File.Exists(manifestPath))
             {
+                _logger.LogError("manifest.json not found in {Dir}", moduleDir);
                 return;
             }
+
+            _logger.LogInformation("Found manifest.json in {Dir}", moduleDir);
 
             ModuleManifest manifest;
             try
             {
-                var json = await File.ReadAllTextAsync(manifestPath, ct);
+                var json = File.ReadAllText(manifestPath);
                 manifest = JsonSerializer.Deserialize<ModuleManifest>(json)
                     ?? throw new InvalidOperationException("manifest.json deserialized into null");
             }
             catch (Exception ex)
             {
-                _loggerFactory.CreateLogger<ModuleLoader>()
-                    .LogError(ex, "Couldn't load manifest.json from {Dir}", moduleDir);
+               _logger.LogError(ex, "Couldn't load manifest.json from {Dir}", moduleDir);
                 return;
             }
+
+            _logger.LogInformation("Loaded manifest for module {Id}", manifest.Id);
 
             if (!Version.TryParse(manifest.SdkVersion, out var moduleSdkVersion) ||
                 moduleSdkVersion.Major != CurrentSdkVersion.Major)
@@ -86,12 +95,16 @@ namespace Core.Modules
                 return;
             }
 
+            _logger.LogInformation("Module {Id} has compatible SDK version: {Version}", manifest.Id, manifest.SdkVersion);
+
             var dllPath = Path.Combine(moduleDir, manifest.EntryAssembly);
             if (!File.Exists(dllPath))
             {
                 RegisterFailed(manifest, $"Couldn't find entry assembly: {dllPath}");
                 return;
             }
+
+            _logger.LogInformation("Loading assembly {Assembly} for module {Id}", manifest.EntryAssembly, manifest.Id);
 
             ModuleLoadContext loadContext;
             IModule instance;
@@ -114,6 +127,8 @@ namespace Core.Modules
                 RegisterFailed(manifest, $"Error during assebly/type loading: {ex.Message}");
                 return;
             }
+
+            _logger.LogInformation("Successfully loaded module {Id} from {Assembly}", manifest.Id, manifest.EntryAssembly);
 
             var moduleLogger = _loggerFactory.CreateLogger(manifest.Id);
             var moduleStorage = new ModuleStorage(manifest.Id, _appDataRoot);
@@ -145,12 +160,14 @@ namespace Core.Modules
                 moduleLogger.LogError(ex, "InitializeAsync failed for {Id}", manifest.Id);
             }
 
+            _logger.LogInformation("Module {Id} loaded with status {Status}", manifest.Id, loaded.Status);
+
             _loadedModules[manifest.Id] = loaded;
         }
 
         private void RegisterFailed(ModuleManifest manifest, string error)
         {
-            _loggerFactory.CreateLogger<ModuleLoader>().LogError("Module {Id} wasn't initialized: {Error}", manifest.Id, error);
+            _logger.LogError("Module {Id} wasn't initialized: {Error}", manifest.Id, error);
         }
 
         private void RegisterStaticCatalog(string moduleId, IModule instance)
