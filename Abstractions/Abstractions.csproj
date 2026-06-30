@@ -8,7 +8,8 @@
 
 	<IsPackable>true</IsPackable>
 	<PackageId>StreamBurst.Abstractions</PackageId>
-	<Version>1.0.3</Version>
+	<AssemblyName>StreamBurst.Abstractions</AssemblyName>
+	<Version>1.0.4</Version>
 	<Description>SDK</Description>
 
 	<DebugType>portable</DebugType>
